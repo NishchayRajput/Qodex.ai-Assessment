@@ -1,65 +1,174 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { OverviewMetricCard } from "../components/OverviewMetricCard";
+import { DateRangeSelector } from "../components/DateRangeSelector";
+import { ThemeToggle } from "../components/ThemeToggle";
+import { GrowthReachSection } from "../components/GrowthReachSection";
+import { ContentPerformanceSection } from "../components/ContentPerformanceSection";
+import { StrategyImpactSection } from "../components/StrategyImpactSection";
+import { PostDetailDrawer } from "../components/PostDetailDrawer";
+import { useDashboard } from "../hooks/use-dashboard";
+
+interface PostData {
+  date: string;
+  reach: number;
+  rollingAverage?: number;
+  engagement: number;
+  followers: number;
+  postPreview: string;
+  isStrategy: boolean;
+  mediaType?: "text" | "image" | "video" | "carousel";
+  performanceLevel?: "low" | "average" | "high";
+}
+
+export default function Dashboard() {
+  const {
+    selectedMetric,
+    dateRange,
+    customDateRange,
+    selectMetric,
+    setDateRange,
+    setCustomDateRange,
+  } = useDashboard();
+
+  const [selectedPost, setSelectedPost] = useState<PostData | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handlePostClick = (post: PostData) => {
+    setSelectedPost(post);
+    setIsDrawerOpen(true);
+  };
+
+  // Mock sparkline data (7 data points for the week)
+  const generateSparklineData = () => 
+    Array.from({ length: 7 }, () => Math.floor(Math.random() * 100) + 50);
+
+  const overviewMetrics = [
+    {
+      id: "reach" as const,
+      title: "Total Reach",
+      value: "18,900",
+      change: 12.4,
+      tooltip: "Total number of unique users who saw your content across all posts",
+      sparklineData: generateSparklineData(),
+    },
+    {
+      id: "avgReach" as const,
+      title: "Avg Reach per Post",
+      value: "1,260",
+      change: 8.2,
+      tooltip: "Average number of people reached per post",
+      sparklineData: generateSparklineData(),
+    },
+    {
+      id: "engagement" as const,
+      title: "Engagement Rate",
+      value: "23.8%",
+      change: 5.7,
+      tooltip: "Percentage of people who interacted with your content (Likes + Comments + Shares) / Impressions",
+      sparklineData: generateSparklineData(),
+    },
+    {
+      id: "followers" as const,
+      title: "Followers Gained",
+      value: "+280",
+      change: 15.3,
+      tooltip: "New followers gained during the selected period",
+      sparklineData: generateSparklineData(),
+    },
+    {
+      id: "profileVisits" as const,
+      title: "Profile Visits",
+      value: "4,560",
+      change: -2.1,
+      tooltip: "Number of times your profile was viewed",
+      sparklineData: generateSparklineData(),
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="min-h-screen w-full bg-slate-50 dark:bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-zinc-50">
+              LinkedIn Analytics
+            </h1>
+            <p className="text-slate-700 dark:text-zinc-400 mt-2">
+              Track your professional presence and engagement
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <DateRangeSelector
+              value={dateRange}
+              onChange={setDateRange}
+              customRange={customDateRange}
+              onCustomRangeChange={setCustomDateRange}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <ThemeToggle />
+          </div>
         </div>
-      </main>
+
+        {/* Overview Section */}
+        <section>
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-zinc-100 mb-2">
+              Overview
+            </h2>
+            <p className="text-sm text-slate-700 dark:text-zinc-400">
+              Click on any metric to filter the dashboard
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {overviewMetrics.map((metric) => (
+              <OverviewMetricCard
+                key={metric.id}
+                title={metric.title}
+                value={metric.value}
+                change={metric.change}
+                tooltip={metric.tooltip}
+                sparklineData={metric.sparklineData}
+                selected={selectedMetric === metric.id}
+                onClick={() => selectMetric(metric.id)}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Filtered Content Area */}
+        {selectedMetric && (
+          <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border-2 border-linkedin-blue/20 p-8">
+              <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50 mb-4">
+                Detailed {overviewMetrics.find(m => m.id === selectedMetric)?.title} Analytics
+              </h3>
+              <p className="text-zinc-600 dark:text-zinc-400">
+                Detailed analytics for {overviewMetrics.find(m => m.id === selectedMetric)?.title.toLowerCase()} will be displayed here.
+                This section updates based on your selected metric and date range.
+              </p>
+              {/* Future: Add detailed charts and tables here */}
+            </div>
+          </section>
+        )}
+
+        {/* Growth & Reach Section */}
+        <GrowthReachSection onPostClick={handlePostClick} />
+
+        {/* Content Performance Section */}
+        <ContentPerformanceSection onPostClick={handlePostClick} />
+
+        {/* Strategy Impact Section */}
+        <StrategyImpactSection />
+
+        {/* Post Detail Drawer */}
+        <PostDetailDrawer 
+          post={selectedPost}
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+        />
+      </div>
     </div>
   );
 }
