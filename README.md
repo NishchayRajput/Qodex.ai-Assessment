@@ -1,5 +1,7 @@
 # LinkedIn Analytics Dashboard
 [Demo](https://qodex-ai-assessment.vercel.app/)
+
+
 A modern, comprehensive analytics dashboard for tracking LinkedIn profile performance, content reach, and engagement metrics. Built with Next.js 16, React 19, and Recharts for powerful data visualization.
 
 ## 📸 Screenshots
