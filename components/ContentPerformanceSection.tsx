@@ -9,8 +9,9 @@ import { cn } from "@/lib/utils";
 
 interface PostPerformanceData {
   id: string;
-  preview: string;
+  postPreview: string;
   reach: number;
+  rollingAverage?: number;
   engagement: number;
   followers: number;
   isStrategy: boolean;
@@ -69,20 +70,20 @@ export function ContentPerformanceSection({ onPostClick }: ContentPerformanceSec
 
   // Mock data - replace with real data
   const allPosts: PostPerformanceData[] = [
-    { id: "1", preview: "Advanced TypeScript patterns", reach: 1780, engagement: 33.5, followers: 25, isStrategy: true, mediaType: "text", date: "Dec 10", performanceLevel: "high" },
-    { id: "2", preview: "GraphQL best practices", reach: 1420, engagement: 26.9, followers: 20, isStrategy: true, mediaType: "image", date: "Dec 11", performanceLevel: "high" },
-    { id: "3", preview: "System design patterns", reach: 1680, engagement: 31.2, followers: 22, isStrategy: true, mediaType: "carousel", date: "Dec 5", performanceLevel: "high" },
-    { id: "4", preview: "Database optimization", reach: 1520, engagement: 27.8, followers: 18, isStrategy: true, mediaType: "text", date: "Dec 7", performanceLevel: "high" },
-    { id: "5", preview: "Performance optimization", reach: 1620, engagement: 29.7, followers: 20, isStrategy: true, mediaType: "image", date: "Dec 13", performanceLevel: "high" },
-    { id: "6", preview: "Docker containerization", reach: 1390, engagement: 25.8, followers: 16, isStrategy: true, mediaType: "video", date: "Dec 14", performanceLevel: "average" },
-    { id: "7", preview: "5 principles of clean code", reach: 1450, engagement: 28.1, followers: 15, isStrategy: true, mediaType: "text", date: "Dec 3", performanceLevel: "high" },
-    { id: "8", preview: "Microservices vs Monolith", reach: 1350, engagement: 25.4, followers: 14, isStrategy: true, mediaType: "image", date: "Dec 8", performanceLevel: "average" },
-    { id: "9", preview: "How to build scalable APIs", reach: 1200, engagement: 24.5, followers: 12, isStrategy: true, mediaType: "text", date: "Dec 1", performanceLevel: "average" },
-    { id: "10", preview: "Monday motivation", reach: 1180, engagement: 22.1, followers: 11, isStrategy: false, mediaType: "image", date: "Dec 12", performanceLevel: "average" },
-    { id: "11", preview: "Weekend reading list", reach: 1100, engagement: 21.3, followers: 9, isStrategy: false, mediaType: "text", date: "Dec 6", performanceLevel: "average" },
-    { id: "12", preview: "Quick tip on React hooks", reach: 980, engagement: 18.2, followers: 8, isStrategy: false, mediaType: "text", date: "Dec 2", performanceLevel: "low" },
-    { id: "13", preview: "Office tour", reach: 1050, engagement: 19.8, followers: 7, isStrategy: false, mediaType: "video", date: "Dec 9", performanceLevel: "low" },
-    { id: "14", preview: "My coffee setup", reach: 890, engagement: 16.5, followers: 5, isStrategy: false, mediaType: "image", date: "Dec 4", performanceLevel: "low" },
+    { id: "1", postPreview: "Advanced TypeScript patterns", reach: 1780, engagement: 33.5, followers: 25, isStrategy: true, mediaType: "text", date: "Dec 10", performanceLevel: "high" },
+    { id: "2", postPreview: "GraphQL best practices", reach: 1420, engagement: 26.9, followers: 20, isStrategy: true, mediaType: "image", date: "Dec 11", performanceLevel: "high" },
+    { id: "3", postPreview: "System design patterns", reach: 1680, engagement: 31.2, followers: 22, isStrategy: true, mediaType: "carousel", date: "Dec 5", performanceLevel: "high" },
+    { id: "4", postPreview: "Database optimization", reach: 1520, engagement: 27.8, followers: 18, isStrategy: true, mediaType: "text", date: "Dec 7", performanceLevel: "high" },
+    { id: "5", postPreview: "Performance optimization", reach: 1620, engagement: 29.7, followers: 20, isStrategy: true, mediaType: "image", date: "Dec 13", performanceLevel: "high" },
+    { id: "6", postPreview: "Docker containerization", reach: 1390, engagement: 25.8, followers: 16, isStrategy: true, mediaType: "video", date: "Dec 14", performanceLevel: "average" },
+    { id: "7", postPreview: "5 principles of clean code", reach: 1450, engagement: 28.1, followers: 15, isStrategy: true, mediaType: "text", date: "Dec 3", performanceLevel: "high" },
+    { id: "8", postPreview: "Microservices vs Monolith", reach: 1350, engagement: 25.4, followers: 14, isStrategy: true, mediaType: "image", date: "Dec 8", performanceLevel: "average" },
+    { id: "9", postPreview: "How to build scalable APIs", reach: 1200, engagement: 24.5, followers: 12, isStrategy: true, mediaType: "text", date: "Dec 1", performanceLevel: "average" },
+    { id: "10", postPreview: "Monday motivation", reach: 1180, engagement: 22.1, followers: 11, isStrategy: false, mediaType: "image", date: "Dec 12", performanceLevel: "average" },
+    { id: "11", postPreview: "Weekend reading list", reach: 1100, engagement: 21.3, followers: 9, isStrategy: false, mediaType: "text", date: "Dec 6", performanceLevel: "average" },
+    { id: "12", postPreview: "Quick tip on React hooks", reach: 980, engagement: 18.2, followers: 8, isStrategy: false, mediaType: "text", date: "Dec 2", performanceLevel: "low" },
+    { id: "13", postPreview: "Office tour", reach: 1050, engagement: 19.8, followers: 7, isStrategy: false, mediaType: "video", date: "Dec 9", performanceLevel: "low" },
+    { id: "14", postPreview: "My coffee setup", reach: 890, engagement: 16.5, followers: 5, isStrategy: false, mediaType: "image", date: "Dec 4", performanceLevel: "low" },
   ];
 
   // Apply filters
@@ -245,7 +246,7 @@ export function ContentPerformanceSection({ onPostClick }: ContentPerformanceSec
                           <span className="text-slate-500 dark:text-zinc-500 text-xs">{getMediaIcon(post.mediaType)}</span>
                           <div>
                             <p className="text-sm font-medium text-slate-900 dark:text-zinc-100 line-clamp-1">
-                              {post.preview}
+                              {post.postPreview}
                             </p>
                             <p className="text-xs text-slate-500 dark:text-zinc-500">{post.date}</p>
                           </div>
